@@ -1,0 +1,25 @@
+{
+  "name": "product-cloudsearch",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tbo/product-cloudsearch.git"
+  },
+  "author": "Thomas Bonk",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tbo/product-cloudsearch/issues"
+  },
+  "homepage": "https://github.com/tbo/product-cloudsearch#readme",
+  "dependencies": {
+    "serverless-plugin-typescript": "^1.1.5"
+  },
+  "devDependencies": {
+    "@types/node": "^9.4.5"
+  }
+}
