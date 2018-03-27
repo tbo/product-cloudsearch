@@ -4,7 +4,8 @@
   "description": "",
   "main": "handler.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --watch handler.ts --exec serverless -- run"
   },
   "repository": {
     "type": "git",
@@ -17,9 +18,15 @@
   },
   "homepage": "https://github.com/tbo/product-cloudsearch#readme",
   "dependencies": {
+    "node-fetch": "^2.0.0",
+    "qs": "^6.5.1",
     "serverless-plugin-typescript": "^1.1.5"
   },
   "devDependencies": {
-    "@types/node": "^9.4.5"
+    "@types/node": "^9.4.5",
+    "@types/node-fetch": "^1.6.7",
+    "aws-sdk": "^2.193.0",
+    "nodemon": "^1.14.12",
+    "serverless-offline": "^3.18.0"
   }
 }

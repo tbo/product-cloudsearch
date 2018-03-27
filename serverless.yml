@@ -21,9 +21,16 @@ provider:
   name: aws
   runtime: nodejs6.10
   region: eu-central-1
+  # iamRoleStatements:
+  #   - Effect: Allow
+  #     Action:
+  #       - cloudsearch:*
+  #     Resource:
+  #       - "*"
 
 plugins:
   - serverless-plugin-typescript
+  - serverless-offline
 # you can overwrite defaults here
 #  stage: dev
 
@@ -57,12 +64,17 @@ plugins:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
+  search:
     handler: handler.search
     events:
      - http:
          path: search
          method: get
+         integration: lambda-proxy
+         # request:
+         #   parameters:
+         #     querystrings:
+         #       q: true
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
