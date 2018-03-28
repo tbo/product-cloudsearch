@@ -8,30 +8,35 @@ const url = `http://${endpoint}/${apiVersion}/search?`;
 
 const parseArray = field => (typeof field === 'string' && field.length) ? JSON.parse(field) : [];
 
-const conjunctFilters = (filters: string[]) => {
-  const filterString = filters
-    .map(item => item.split(':'))
-    .map(([key, value]) => `${key}:'${value}'`)
-    .join(' ');
+const formatFields = (fields: string[]) =>
+  fields
+    .map(item => item.split(/[:|=]/))
+    .map(([key, value]) => `${key}:'${value}'`);
+
+const conjunctFilters = (filters: Array<string | string[]>) => {
+  const disjunctive = filters.filter(item => Array.isArray(item)).map(formatFields).map(item => `(or ${item.join(' ')})`);
+  const conjunctive = formatFields(filters.filter(item => !Array.isArray(item)) as string[]);
+  const filterString = conjunctive.concat(disjunctive).join(' ');
   return filters.length < 2 ? filterString : `(and ${filterString})`;
 }
-const getOptions = ({query, facetFilters, hitsPerPage = 100, page = 0, facets, disjunctiveFacets}) => ({
+
+const getOptions = ({query, facetFilters, numericFilters, hitsPerPage = 100, page = 0, facets}) => ({
   q: query,
   facetFilters: parseArray(facetFilters),
+  numericFilters: parseArray(numericFilters),
   size: hitsPerPage,
   start: page * hitsPerPage,
-  facets,
-  disjunctiveFacets: parseArray(disjunctiveFacets)
+  facets
 });
 
-const getQueryParams = ({facetFilters, facets, ...options}) => ({
+const getQueryParams = ({facetFilters, numericFilters, facets, ...options}) => ({
   ...options,
-  ...(facetFilters ? {fq: conjunctFilters(facetFilters), ...options} : {}),
+  ...(facetFilters ? {fq: conjunctFilters(facetFilters.concat(numericFilters)), ...options} : {}),
   ...parseArray(facets).reduce((prev, facet) => ({...prev, [`facet.${facet}`]: '{}'}), {})
 });
 
-module.exports.search = (event, _, callback) => {
-  const params = getQueryParams(getOptions(event.queryStringParameters));
+module.exports.search = ({queryStringParameters}, _, callback) => {
+  const params = getQueryParams(getOptions(queryStringParameters));
   fetch(url + querystring.stringify(params))
     .then(result => result.text())
     .then(body => {
